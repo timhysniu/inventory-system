@@ -5,16 +5,11 @@ const HapiSwagger = require('hapi-swagger');
 const Mysql = require('mysql');
 const Pack = require('./package');
 const routes = require('./routes');
+const dbConfig = require('./database/config');
 
 
 const init = async () => {
-  const pool = Mysql.createPool({
-    connectionLimit: 10,
-    host: '64.227.23.51',
-    user: 'treez',
-    password: 'tr33z!',
-    database: 'treez'
-  });
+  const pool = Mysql.createPool(dbConfig);
 
   const swaggerOptions = {
     info: {

@@ -3,7 +3,7 @@
 ## Requirements
 
 * Node 12 is required by latest Hapi framework
-* MySQL database with correct schema. You can use the current remote database that is provided (MySql v5.7), of if you choose to host your own you can impot the `.sql` file in `database` folder. 
+* MySQL database with correct schema. You can use the current remote database that is provided in `database/config.js`(using MySql v5.7), of if you choose to host your own you can import the `.sql` file in `database/db.sql` folder. 
 
 ## Setup
 
@@ -19,9 +19,11 @@ npm run dev
 
 The following are few highlights worth mentioning:
 
-* Hapi Framework: This was chosen for few reasons, but some of the key ones are Joi validation and how hapi works with joi. In addition to handling request and response validation it also allows self-documenting the APIs with Swagger. To view the documentation you can go to http://localhost:3000/documentation
-* Responses and requests are validated against with Joi but further validation can be enforced to ensure that all input and expected output is valid.
+* Hapi Framework: This was chosen for few reasons, but some of the key ones are `Joi` validation and how `Hapi` works with `Joi`. In addition to handling request and response validation it also allows self-documenting the APIs with Swagger. To view the documentation you can go to http://localhost:3000/documentation
+* Responses and requests are validated against with `Joi` but further validation can be enforced to ensure that all input and expected output is valid.
 * Default `boom` error types are used in HTTP responses. We can probably create our own error responses that better describe the errors. In certain cases we want to use internal to avoid exposing sensitive data in error messages (for the purpose of this exercise we are not returning internal 500 errors)
+* Relational database makes most sense since an inventory problem is relational to begin with. We will be doing plenty of joins so a solution like MySQL or Postgre is suitable.
+* Database wrapper in `lib/mysqldb` is my contribution (https://github.com/timhysniu/mysqljs) but is still work in progress. It was intended to make SQL syntax similar to that of MongoDB. This is solely a preference. Any MySQL wrapper can be used.
 
 ### Ommitted
 
@@ -71,7 +73,7 @@ curl -X GET "http://localhost:3000/flushdb" -H  "accept: application/json"
 
 #### Create Products and Inventory
 
-We can create a few products:
+We can create a couple of products:
 
 ```
 curl --location --request POST 'http://127.0.0.1:3000/inventory' \
@@ -94,7 +96,8 @@ curl --location --request POST 'http://127.0.0.1:3000/inventory' \
   "description": "All time favourite Blizzard game",
   "price": 30,
   "qty": 200
-}'```
+}'
+```
 
 Then retrieving inventory:
 ```
@@ -125,6 +128,7 @@ curl --location --request GET http://localhost:3000/inventory
 (or by ID):
 ```
 curl --location --request GET http://localhost:3000/inventory/062b38bf-d46a-4939-8a42-92368fc22c7d
+
 ....
 ```
 
@@ -132,8 +136,11 @@ Initiallly there are no orders:
 
 ```
 curl --location --request GET 'http://127.0.0.1:3000/orders'
+
 []
 ```
+
+#### Creating Order and Viewing Inventory
 
 To create an order
 ```
@@ -164,6 +171,8 @@ curl --location --request GET 'http://127.0.0.1:3000/inventory/062b38bf-d46a-493
 }
 ```
 
+#### Cancelling an Order
+
 Finally we can cancel this order:
 
 ```
@@ -177,6 +186,7 @@ curl --location --request PUT 'http://127.0.0.1:3000/order' \
 
 If retrieve the same inventory request for product ID `062b38bf-d46a-4939-8a42-92368fc22c7d` we will be able to see that `qty` is updated to 100. We are doing this while at the same time keeping a historical record of order `da3064b6-3e79-4efc-87ed-e635ba90cbe0` which is now in cancelled state.
 
+```
 {
   "product_id":"062b38bf-d46a-4939-8a42-92368fc22c7d",
   "name":"Starcraft",
@@ -186,3 +196,4 @@ If retrieve the same inventory request for product ID `062b38bf-d46a-4939-8a42-9
   "created":"2020-09-02T07:43:31.000Z",
   "last_updated":"2020-09-02T13:13:39.000Z"
 }
+```
