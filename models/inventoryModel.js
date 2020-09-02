@@ -29,7 +29,7 @@ class InventoryModel {
    * Creates an a product with initial inventory.
    *
    * @param {object} data 
-   * @return {bool} - true if succesfully placed
+   * @return {object} - map of inserted objects: product and shipment
    */
   async createInventory(data) {
     const { qty } = data;

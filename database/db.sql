@@ -12,7 +12,9 @@ CREATE TABLE `orders` (
   `order_status` varchar(64) NOT NULL DEFAULT 'new',
   `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `last_updated` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`order_id`)
+  PRIMARY KEY (`order_id`),
+  KEY `created` (`created`),
+  KEY `status` (`order_status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `products` (

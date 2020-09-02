@@ -54,6 +54,7 @@ class OrderModel {
    * We are using `product.qty` as indicator of available qty.
    * 
    * @param {array} products 
+   * @return {boolean} - true if purchase or products is possible
    */
   async canPurchaseProducts(products) {
     const productIds = products.map(product => product.product_id);
@@ -87,6 +88,7 @@ class OrderModel {
    * from inventory.
    *
    * @param {object} data 
+   * @return {object|boolean} - order object or false on failure
    */
   async createOrder(data) {
     const { products, email } = data;
@@ -128,7 +130,8 @@ class OrderModel {
    * CANCELLING ORDERS: This means that products purchased will be added
    *  back to the inventory. order status is changed from 'new' to 'cancelled'
    * 
-   * @param {object} data 
+   * @param {object} data
+   * @return {object} - updated order 
    */
   async updateOrder(data) {
     const { order_id, order_status } = data;
